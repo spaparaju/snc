@@ -429,3 +429,10 @@ ${OC} scale --replicas=1 ingresscontroller/default -n openshift-ingress-operator
 
 # Set default route for registry CRD from false to true.
 ${OC} patch config.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
+
+# Unmanage openshift-console operator config
+${OC} patch console.operator.openshift.io cluster -p='{"spec": {"managementState": "Unmanaged"}}' --type merge
+
+# Scale console and download pods to 1
+${OC} scale --replicas=1 deployment downloads -n openshift-console
+${OC} scale --replicas=1 deployment console -n openshift-console
