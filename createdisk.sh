@@ -247,6 +247,13 @@ QEMU_IMG=${QEMU_IMG:-qemu-img}
 VIRT_FILESYSTEMS=${VIRT_FILESYSTEMS:-virt-filesystems}
 GUESTFISH=${GUESTFISH:-guestfish}
 DIG=${DIG:-dig}
+ARCH=$(uname -m)
+
+yq_ARCH=${ARCH}
+# yq and install_config.yaml use amd64 as arch for x86_64
+if [ "${ARCH}" == "x86_64" ]; then
+    yq_ARCH="amd64"
+fi
 
 if [[ $# -ne 1 ]]; then
    echo "You need to provide the running cluster directory to copy kubeconfig"
@@ -325,6 +332,10 @@ ${SSH} core@api.${CRC_VM_NAME}.${BASE_DOMAIN} -- sudo podman pull quay.io/crcont
 
 # Stop the kubelet service so it will not reprovision the pods
 ${SSH} core@api.${CRC_VM_NAME}.${BASE_DOMAIN} -- sudo systemctl stop kubelet
+
+# Remove system reserved block from kubelet config
+${SSH} core@api.${CRC_VM_NAME}.${BASE_DOMAIN} -- "sudo curl -L https://github.com/mikefarah/yq/releases/download/3.3.0/yq_linux_${yq_ARCH} -o /usr/local/bin/yq && sudo chmod +x /usr/local/bin/yq"
+{SSH} core@api.${CRC_VM_NAME}.${BASE_DOMAIN} -- sudo /usr/local/bin/yq delete --inplace /etc/kubernetes/kubelet.conf systemReserved
 
 # Stop the network time sync
 ${SSH} core@api.${CRC_VM_NAME}.${BASE_DOMAIN} -- sudo timedatectl set-ntp off
