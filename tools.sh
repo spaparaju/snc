@@ -66,3 +66,6 @@ fi
 if ! rpm -q libguestfs-xfs; then
     sudo yum install libguestfs-xfs
 fi
+
+# Restart the libvirt service after update
+sudo systemctl restart libvirtd
