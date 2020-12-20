@@ -2,10 +2,12 @@
   # Version of the bundle, used to denote format changes
   # Major is only increased changes incompatible with previous versions
   # Minor is increased for backwards-compatible changes
-  "version": "1.0",
+  "version": "1.1",
   # Type of this bundle content
   # Currently the only valid type is 'snc' (which stands for 'single-node-cluster')
   "type": "snc",
+  # Name of the bundle
+  "name": "crc_libvirt_4.6.1",
   "buildInfo": {
     # Time this bundle was built
     "buildTime": "2019-04-23T14:55:32+00:00",
